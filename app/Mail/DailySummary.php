@@ -13,12 +13,16 @@ class DailySummary extends Mailable
 {
     use Queueable, SerializesModels;
 
+    private $tasks;
+    private $user_name;
+
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->tasks = $data['tasks'];
+        $this->user_name = $data['user_name'];
     }
 
     /**
@@ -27,7 +31,7 @@ class DailySummary extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Daily Summary',
+            subject: 'Your Daily Summary',
         );
     }
 
@@ -37,7 +41,11 @@ class DailySummary extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.daily-summary',
+            with: [
+                'tasks' => $this->tasks,
+                'user_name' => $this->user_name,
+            ],
         );
     }
 

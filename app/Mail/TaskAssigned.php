@@ -9,16 +9,22 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class TaskAssigned extends Mailable
+class TaskAssigned extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
+
+    private $task_name;
+    private $project_name;
+    private $user_name;
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct($data)
     {
-        //
+        $this->task_name = $data['task_name'];
+        $this->project_name = $data['project_name'];
+        $this->user_name = $data['user_name'];
     }
 
     /**
@@ -37,7 +43,12 @@ class TaskAssigned extends Mailable
     public function content(): Content
     {
         return new Content(
-            view: 'view.name',
+            view: 'mail.task-assigned',
+            with: [
+                'task_name' => $this->task_name,
+                'project_name' => $this->project_name,
+                'user_name' => $this->user_name,
+            ],
         );
     }
 
